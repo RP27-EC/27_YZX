@@ -1,8 +1,11 @@
 /*********************************************
-板间通讯函数
+File Name  //community.c
 
+Descripition: //change information between two boards
 
-
+Function list://void board_init(void)结构体初始化
+//void board_update_send(void)通信发送函数
+//void board_rx(board_t *board, uint8_t *rxBuf)接收云台发送的数据
 **********************************************/
 #include "community.h"
 #include "rc_sensor.h"
@@ -16,6 +19,7 @@ uint8_t rx_gimb_buff[8];//电机的接收数组
 board_t board = {.set_back_flag = 0};
 extern imu_sensor_t imu_sensor;
 
+//结构体初始化
 void board_init(void)
 {
 	board.last_yaw = imu_sensor.info->base_info.yaw;
@@ -23,6 +27,7 @@ void board_init(void)
 	board.yaw_msg = imu_sensor.info->base_info.yaw;	
 }
 
+//通信发送函数
 void board_update_send(void)
 {
 	
@@ -37,6 +42,7 @@ void board_update_send(void)
 	}
 	
 	//模式判断
+	//通过拨杆判断模式
 	if (rc_sensor.info->s1 == 1)
 	{
 		board.control_modle = imu;
@@ -104,75 +110,15 @@ void board_update_send(void)
 	}
 	
 	
-	
-	
-	/*
-	board.current_yaw = imu_sensor.info->base_info.yaw;
-	
-	board.rc_stata = rc_sensor.work_state;
-	
-	//更新底盘对应角度
-	board.yaw_msg = board.current_yaw - board.last_yaw;
-	
-	while( board.yaw_msg >180.0f)
-	{
-		board.yaw_msg = board.yaw_msg - 360.0f;
-	
-	}
-	
-	while (board.yaw_msg < -180.0f)
-	{
-		board.yaw_msg = board.yaw_msg + 360.0f;
-	
-	}
-	
-	
-	int16_t yaw_increment_int = (int16_t)(board.yaw_msg * 100.0f);
-	
-	int16_t ch0_yaw = rc_sensor.info->ch0;   // 控制云台Yaw
-	
-	if (rc_sensor.info->s1 == 2)
-	{
-		board.set0_flag = 1;
-	}
-	else
-	{
-		board.set0_flag = 0;
-	}
-	
-	uint8_t status_flag = 1;
-	
-	if (board.yaw_msg == DEV_ONLINE)
-	{
-		status_flag = 0;
-	}
-	memset(tx_gimb_buff, 0, 8);
-	
-    memcpy(&tx_gimb_buff[0], &ch0_yaw, 2);
-
-    memcpy(&tx_gimb_buff[2], &ch1_pitch, 2);
-	
-	memcpy(&tx_gimb_buff[4], &yaw_increment_int, 2);
-	
-	tx_gimb_buff[7] = board.set0_flag;
-
-    if (CAN_SendData(&hfdcan2, 0x123, tx_gimb_buff) != HAL_OK)
-	{
-		fail_tx_gimb ++;
-	}
-	
-	board.last_yaw = board.current_yaw;
-	
-	
-	*/
 }
 
+//接收云台发送的数据
 void board_rx(board_t *board, uint8_t *rxBuf)
 {
 	board->gimb_forward = rxBuf[0];
 	int16_t temp_int = (uint16_t)((rxBuf[1] << 8) | rxBuf[2]);
 	
-	int16_t mec_fb_int = (int16_t)temp_int;
+	int16_t mec_fb_int = (int16_t)temp_int;//符号转化
 	
 	board->relative_mec_angle = (float)mec_fb_int / 10000.0f;
 }

@@ -7,8 +7,10 @@
 
 enum gimb_forward{head,back};
 enum work_modle{chass,imu};
+//通信相关数据
 typedef struct
 {
+	//机械模式
 	float yaw_msg;
 	uint8_t rc_stata;
 	float current_yaw;

@@ -1,14 +1,13 @@
 /*********************************************************************************
-File Name  //down_car.c
+File Name  //chassis.c
 
 Descripition: // use it to control revieve remote control data and control chassis
 
 Function list: //void chasiss_init()
-//void chasiss_update(Motor_RM_Group_t* chassis)
-//void chasiss_test(Motor_RM_Group_t* chassis)
-//void chasiss_to_motor_caculate(chassis_t* chassis_data,rc_sensor_t* rc_sensor)
-//void chassis_work(Motor_RM_Group_t* group)
-
+//void chasiss_test(Motor_RM_Group_t* chassis)电机输出测试函数
+//void chasiss_to_motor_caculate(chassis_t* chassis_data,rc_sensor_t* rc_sensor)逆解算，车算底盘
+//void chassis_work(Motor_RM_Group_t* group)工作函数
+//void chassis_init(Motor_RM_Group_t* chassis)底盘初始化函数
 **********************************************************************************/
 
 
@@ -54,6 +53,7 @@ void chasiss_to_motor_caculate(chassis_t* chassis_data,rc_sensor_t* rc_sensor)
 	int y_move = abs(rc_sensor->info->ch2);
 	int turn_move = abs(rc_sensor->info->ch0);
 	
+	//机械模式
 	if (board.control_modle == chass)
 	{
 		if (chassis_data->gimb_forward == head)
@@ -72,6 +72,7 @@ void chasiss_to_motor_caculate(chassis_t* chassis_data,rc_sensor_t* rc_sensor)
 		}
 	
 	}
+	//陀螺仪模式
 	else
 	{
 		chassis_data->x_target  =-(rc_sensor->info->ch3)/rc_MAX_OUT * MAX_OUT;
